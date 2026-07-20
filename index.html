@@ -1,472 +1,119 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CFPS Section Router v2 · 키워드 → 섹션</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CFPS · Command Center — 두바이 2026.8.23</title>
 <style>
-:root{--ink:#1b2735;--muted:#69778a;--navy:#14345c;--blue:#2f6fbd;--line:#dae3ee;--gold:#f4b942;--red:#c94c4c;--green:#2f7d61;--purple:#7357a6}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo",Arial,sans-serif;background:linear-gradient(#eaf1f9,#f8fafc);color:var(--ink)}
-.app{max-width:1500px;margin:auto;padding:20px}
-.hero{background:linear-gradient(135deg,#0e2748,#2f6fbd);color:#fff;border-radius:22px;padding:24px 26px;box-shadow:0 10px 28px rgba(20,40,70,.15)}
-.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;opacity:.78}
-h1{margin:.3rem 0;font-size:clamp(1.9rem,4.4vw,3.4rem);line-height:1}
-.subtitle{max-width:900px;opacity:.9;font-size:.98rem}
-.pill{display:inline-block;margin-top:12px;padding:9px 14px;border-radius:999px;background:rgba(255,255,255,.16);font-weight:800;font-size:.92rem}
-.herolinks{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.hero a{color:#fff;text-decoration:none}
-.linkpill{display:inline-block;padding:9px 13px;border-radius:999px;background:rgba(255,255,255,.22);font-weight:900;font-size:.9rem;border:1px solid rgba(255,255,255,.22)}
+  :root{
+    --bg:#0b1622;--panel:#12233a;--panel-2:#0f1d30;--line:#1e3350;
+    --ink:#e8eef6;--muted:#8aa1bd;--ember:#f2a154;--ember-dim:#c67a34;
+    --water:#4ea3d6;--hot:#e06b56;--ok:#5fbf8f;--code-bg:#0a2036;
+    --mono:'SFMono-Regular',ui-monospace,'Roboto Mono','Courier New',monospace;
+    --sans:'Inter','Segoe UI','Malgun Gothic','Apple SD Gothic Neo',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;
+    -webkit-font-smoothing:antialiased;min-height:100vh}
+  .wrap{max-width:940px;margin:0 auto;padding:0 18px 70px}
 
-/* funnel */
-.funnel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:16px;box-shadow:0 8px 24px rgba(30,50,80,.07)}
-.funnel h2{margin:0 0 3px;color:var(--navy);font-size:1.15rem}
-.fnote{color:var(--muted);margin:0 0 14px;font-size:.9rem}
-.fgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
-.fstep{border:2px solid var(--line);border-radius:14px;padding:11px;background:#fbfdff;position:relative}
-.fstep .qn{font-weight:900;font-size:.94rem;margin-bottom:6px;line-height:1.3}
-.fstep .yes{font-size:.8rem;color:#33445a;line-height:1.5}
-.fstep .go{margin-top:7px;font-weight:900;color:var(--blue);font-size:.92rem;cursor:pointer}
-.f1{border-color:#e8a08a;background:#fff7f4}.f2{border-color:#8fc4a4;background:#f4fbf7}.f3{border-color:#b5a3d8;background:#faf7ff}
-.f4{border-color:#8fb6dd;background:#f5faff}.f5{border-color:#d4ac7d;background:#fffaf2}.f6{border-color:#9aa6b8;background:#f7f9fc}
+  header.top{padding:40px 0 8px;text-align:center}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--ember)}
+  h1{font-size:34px;margin:8px 0 6px;font-weight:800;letter-spacing:-.02em}
+  .sub{font-size:14px;color:var(--muted);margin:0}
+  .sub b{color:var(--ember)}
 
-/* router */
-.router{position:sticky;top:0;z-index:20;background:rgba(238,243,249,.95);backdrop-filter:blur(6px);padding:12px 0;margin-top:14px;border-bottom:1px solid var(--line)}
-.routerbar{display:grid;grid-template-columns:1fr auto auto auto;gap:8px}
-#q{padding:14px 16px;border:2px solid var(--blue);border-radius:14px;font-size:1.02rem;font-weight:600}
-button{border:0;border-radius:12px;padding:12px 14px;background:var(--navy);color:#fff;font-weight:800;cursor:pointer;font-size:.9rem}
-button.sec{background:#fff;color:var(--navy);border:1px solid var(--line)}
-#result{margin-top:9px;display:none;border-radius:14px;padding:13px 15px;background:#fff;border:2px solid var(--gold);box-shadow:0 6px 18px rgba(30,50,80,.1)}
-#result .hit{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px dashed var(--line)}
-#result .hit:last-child{border-bottom:0}
-#result .kw{font-weight:800;min-width:175px}
-#result .to{font-weight:900;color:var(--blue)}
-#result .ch{color:var(--muted);font-size:.88rem}
-#result .split2{color:var(--red);font-weight:800;font-size:.82rem}
+  /* countdown strip */
+  .strip{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;margin:22px 0 6px;
+    font-family:var(--mono);font-size:13px}
+  .strip .kv{color:var(--muted)}
+  .strip .kv b{color:var(--water);font-size:15px}
+  .strip .kv b.warn{color:var(--ember)}
 
-.legend{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 8px;align-items:center}
-.lg{font-size:.78rem;font-weight:800;padding:6px 10px;border-radius:999px}
-.lg.a{background:#e7f1ff;color:#1c5ea8}.lg.b{background:#e9f7ef;color:#20714a}.lg.c{background:#fdf0dd;color:#8a5a00}.lg.d{background:#f3ecff;color:#5d3f95}.lg.e{background:#fdeaea;color:#9d2c2c}
-.vol{font-size:.78rem;font-weight:800;padding:6px 10px;border-radius:999px;background:#14345c;color:#fff}
+  .divider{height:1px;background:var(--line);margin:26px 0}
 
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:6px}
-.sec-card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:16px;padding:14px 15px;box-shadow:0 6px 18px rgba(30,50,80,.07);scroll-margin-top:120px}
-.sec-card.g1{border-left-color:#2f6fbd}.sec-card.g2{border-left-color:#2f7d61}.sec-card.g3{border-left-color:#c98b2a}.sec-card.g4{border-left-color:#7357a6}.sec-card.g5{border-left-color:#c94c4c}
-.sec-head{display:flex;align-items:baseline;gap:9px}
-.num{font-size:1.75rem;font-weight:900;color:var(--navy);line-height:1}
-.tit{font-weight:800;font-size:.98rem;line-height:1.25}
-.kr{color:var(--muted);font-weight:700;font-size:.85rem}
-.vbadge{margin-left:auto;font-size:.68rem;font-weight:900;padding:3px 7px;border-radius:6px;background:#eef4fb;color:#1c5ea8;white-space:nowrap}
-.vbadge.v2{background:#f3ecff;color:#5d3f95}
-.nfpa{margin-top:8px;font-size:.8rem;font-weight:800;color:#8a5a00;background:#fdf0dd;display:inline-block;padding:3px 8px;border-radius:6px}
-.tags{margin-top:7px}
-.tag{display:inline-block;padding:4px 8px;border-radius:999px;font-size:.76rem;font-weight:700;margin:2px 3px 2px 0;background:#eef4fb;color:#1c5ea8}
-details{margin-top:9px}
-summary{cursor:pointer;font-weight:800;color:var(--navy);font-size:.83rem}
-.chs{margin:7px 0 0;padding-left:1.1rem;font-size:.84rem;color:#33445a}
-.chs li{margin:.15rem 0}
-.notmine{margin-top:9px;border-left:4px solid var(--red);background:#fff7f7;border-radius:8px;padding:8px 10px;font-size:.82rem}
-.notmine b{color:var(--red)}
+  .grid{display:grid;grid-template-columns:1fr;gap:14px}
+  @media(min-width:680px){ .grid{grid-template-columns:1fr 1fr} .wide{grid-column:1 / -1} }
 
-section.block{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;margin:20px 0;box-shadow:0 8px 24px rgba(30,50,80,.07)}
-section.block h2{margin:0 0 3px;color:var(--navy)}
-.note{color:var(--muted);margin:0 0 14px;font-size:.92rem}
-.trapline{border:1px dashed #d6c7ef;background:#faf8ff;border-radius:12px;padding:11px 13px;margin-bottom:10px}
-.trapline .t{font-weight:800;margin-bottom:6px}
-.split{display:flex;flex-wrap:wrap;gap:8px}
-.branch{flex:1;min-width:185px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:.86rem}
-.branch b{color:var(--blue)}
-.chapgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.chapcard{border:1px solid var(--line);border-radius:12px;background:#fbfdff;padding:10px 12px}
-.chapcard h3{margin:0 0 7px;color:var(--navy);font-size:.98rem}
-.chapcard ul{margin:0;padding-left:1.1rem;color:#33445a;font-size:.86rem;line-height:1.45}
-.chapcard li{margin:.15rem 0}
+  a.card{display:block;text-decoration:none;color:inherit;background:var(--panel);
+    border:1px solid var(--line);border-radius:16px;padding:22px 20px;transition:.16s;position:relative;overflow:hidden}
+  a.card:hover{border-color:var(--ember-dim);transform:translateY(-2px)}
+  a.card:focus-visible{outline:2px solid var(--ember);outline-offset:2px}
+  .card .n{font-family:var(--mono);font-size:12px;color:var(--ember);letter-spacing:.1em}
+  .card h2{font-size:20px;margin:6px 0 6px;font-weight:700}
+  .card p{font-size:13.5px;color:var(--muted);margin:0 0 14px;line-height:1.6}
+  .card .go{font-family:var(--mono);font-size:12px;color:var(--water)}
+  .card .tag{position:absolute;top:16px;right:16px;font-family:var(--mono);font-size:10.5px;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);
+    border-radius:999px;padding:4px 10px}
+  .card.primary{background:linear-gradient(160deg,#16304e 0%,var(--panel) 60%);border-color:var(--ember-dim)}
+  .card.primary .tag{color:var(--ember);border-color:var(--ember-dim)}
 
-.strategy{background:linear-gradient(135deg,#14345c,#22436e);color:#fff;border-radius:18px;padding:20px;margin:20px 0}
-.strategy h2{margin:0 0 12px;color:#fff}
-.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.step{background:rgba(255,255,255,.1);border-radius:12px;padding:12px}
-.step b{display:block;font-size:1.5rem;margin-bottom:4px;color:var(--gold)}
-.rule{margin-top:14px;background:rgba(244,185,66,.18);border-left:4px solid var(--gold);border-radius:8px;padding:11px 13px;font-weight:800}
-
-#drill{text-align:center}
-#dkw{font-size:1.9rem;font-weight:900;color:var(--navy);margin:14px 0}
-#dans{display:none;font-size:1.1rem;font-weight:800;color:var(--green);margin:8px 0}
-#dch{display:none;color:var(--muted);font-size:.9rem}
-#dscore{color:var(--muted);font-size:.88rem;margin-top:10px}
-.hit-card{outline:3px solid var(--gold);background:#fffdf3}
-.footer{text-align:center;color:var(--muted);font-size:.8rem;padding:10px 0 30px}
-@media(max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.fgrid{grid-template-columns:repeat(3,1fr)}.steps{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){.app{padding:11px}.grid{grid-template-columns:1fr}.fgrid{grid-template-columns:repeat(2,1fr)}.routerbar{grid-template-columns:1fr;gap:7px}.chapgrid{grid-template-columns:1fr}}
-@media print{.router,#drillbox,button{display:none!important}body{background:#fff}.grid{grid-template-columns:repeat(2,1fr)}.sec-card{break-inside:avoid;box-shadow:none}details{display:none}@page{size:A4;margin:9mm}}
+  .note{margin-top:26px;background:var(--code-bg);border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;font-size:12.5px;color:var(--muted);line-height:1.7}
+  .note b{color:var(--ink)}
+  footer{text-align:center;margin-top:30px;font-family:var(--mono);font-size:11px;color:#4a627f}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">CFPS · Command Center</div>
+    <h1>Fire Protection Handbook</h1>
+    <p class="sub">Certified Fire Protection Specialist · 8개 도메인 · 오픈북(21st ed.) · 두바이 <b>2026.8.23</b></p>
+    <div class="strip">
+      <span class="kv">시험까지 <b id="dday" class="warn">D-–</b></span>
+      <span class="kv">문제은행 <b>464</b>문항</span>
+      <span class="kv">합격선 <b>70%</b></span>
+    </div>
+  </header>
 
-<header class="hero">
-<div class="eyebrow">CFPS · 20th Ed practice router · 21st Ed printed-book exam</div>
-<h1>SECTION ROUTER</h1>
-<div class="subtitle">암기가 아니라 라우팅. 키워드 하나 → 섹션 → 챕터 → 책. 5초 안에 어디를 펼칠지 나오면 끝.</div>
-<div class="herolinks">
-<div class="pill">키워드 → 섹션 → 챕터 → 책</div>
-<a class="linkpill" href="quiz.html">문제은행 열기</a>
-<a class="linkpill" href="reference.html">상세 위치노트</a>
-<a class="linkpill" href="#chapterguide">Chapter Guide</a>
-</div>
-</header>
+  <div class="divider"></div>
 
-<div class="funnel">
-<h2>문제 접근 순서 — 5초 퍼널</h2>
-<p class="fnote">위에서부터 던진다. YES 나오면 거기서 멈춘다.</p>
-<div class="fgrid">
-<div class="fstep f1"><div class="qn">① 불(화재) 현상 자체?</div><div class="yes">연소 · 열전달 · HRR · 점화 · 폭발 이론 · flashover</div><div class="go" onclick="jump(2)">→ S2</div></div>
-<div class="fstep f2"><div class="qn">② 사람(피난·행동·교육)?</div><div class="yes">피난 · 이동시간 · ASET/RSET · 군중 · 교육 · 메시지</div><div class="go" onclick="jump(4)">→ S4, S5</div></div>
-<div class="fstep f3"><div class="qn">③ 물질·위험물·공정?</div><div class="yes">재료 특성 · 저장 · 장비 · 공정 · hot work</div><div class="go" onclick="jump(6)">→ S6~S9</div></div>
-<div class="fstep f4"><div class="qn">④ 설비·시스템?</div><div class="yes">경보 · 급수 · 스프링클러 · 가스/포/분말 · 건물설비</div><div class="go" onclick="jump(14)">→ S10, S14~S17</div></div>
-<div class="fstep f5"><div class="qn">⑤ 건물·구조·용도?</div><div class="yes">구획 · 벽 · 내장재 · 구조 하중 · 용도별 기준</div><div class="go" onclick="jump(18)">→ S18~S20</div></div>
-<div class="fstep f6"><div class="qn">⑥ 관리·조직·대응·이동수단?</div><div class="yes">조직 · 통신 · 현장대응 · 터널 · 선박 · 항공 · 차량</div><div class="go" onclick="jump(12)">→ S1, S3, S12, S13, S21</div></div>
-</div>
-</div>
+  <div class="grid">
+    <a class="card primary wide" href="train.html">
+      <span class="tag">추천 · 매일</span>
+      <div class="n">01 · TRAIN</div>
+      <h2>랜덤 훈련 + 리포트</h2>
+      <p>464문항을 랜덤으로. 키워드 → 섹션 → 챕터 → 정답 순차 공개로 훔쳐보기 차단. 문제별 소요 시간이 기록되고, 세션마다 찾는 속도가 줄어드는지 추이로 확인. 느린 문제·챕터 오판 자동 플래그.</p>
+      <span class="go">훈련 시작 →</span>
+    </a>
 
-<div class="router">
-<div class="routerbar">
-<input id="q" placeholder="키워드 입력: standpipe · flashover · hot work · 터널 · 내장재 · NFPA 25 · pitot">
-<button onclick="drill()">드릴</button>
-<button class="sec" onclick="window.print()">인쇄</button>
-<button class="sec" onclick="clearQ()">지움</button>
-</div>
-<div id="result"></div>
-</div>
+    <a class="card" href="locator.html">
+      <div class="n">02 · LOCATOR</div>
+      <h2>색인 로케이터</h2>
+      <p>개념·키워드로 섹션과 페이지를 빠르게 찾는 도구. 실전에서 "이건 어디 있더라"를 줄이는 인덱싱 연습용.</p>
+      <span class="go">로케이터 열기 →</span>
+    </a>
 
-<div class="legend">
-<span class="vol">권1 = S1–S11 (회사)</span>
-<span class="vol" style="background:#5d3f95">권2 = S12–S21 (집)</span>
-<span class="lg a">1–5 기초·분석</span>
-<span class="lg b">6–10 물질·장비·공정</span>
-<span class="lg c">11–13 예방·소방조직</span>
-<span class="lg d">14–17 경보·소화설비</span>
-<span class="lg e">18–21 건축·용도·이동</span>
-</div>
+    <a class="card" href="quiz.html">
+      <div class="n">03 · QUESTION BANK</div>
+      <h2>문제은행 · 시험 시뮬</h2>
+      <p>연습 모드와 실전 모드(30문항 1시간 → 100문항 3시간). 섹션별 정답률 리포트로 약한 도메인 확인.</p>
+      <span class="go">문제은행 열기 →</span>
+    </a>
+  </div>
 
-<div class="grid" id="cards"></div>
+  <div class="note">
+    <b>세 앱은 역할이 달라요.</b> TRAIN은 "찾는 속도" 훈련, LOCATOR는 위치 검색 연습, QUESTION BANK는 실전 시험 시뮬레이션 + 도메인별 정답률. 기록은 각 앱이 따로 저장하니 서로 안 섞입니다.
+    <br><br>
+    <b>참고:</b> 브라우저 기록은 이 주소(도메인)에 묶여요. 다른 기기·다른 주소에서 열면 기록이 안 넘어오니, 옮기기 전에 TRAIN 리포트에서 <b>기록 내보내기(JSON)</b>로 백업하세요.
+  </div>
 
-<section class="block" id="chapterguide">
-<h2>Chapter Guide — 챕터마다 무엇을 찾는 곳인가</h2>
-<p class="note">전체 내용을 공부하는 표가 아니라, 문제 키워드를 보고 어느 챕터를 열지 정하는 용도다.</p>
-<div class="chapgrid">
-<div class="chapcard"><h3>권1 · 회사 S1-S5</h3><ul>
-<li><b>S1</b> 코드/AHJ/재난/와일드랜드 지붕/예방점검</li>
-<li><b>S2</b> 열전달/연소/HRR/점화/flashover/폭발 이론</li>
-<li><b>S3</b> NFPA 921/화재조사/모델링/hazard-risk/design fire</li>
-<li><b>S4</b> ASET/RSET/피난시간/exit access/egress 설계</li>
-<li><b>S5</b> 교육/CRR/5 Es/메시지/juvenile firesetting</li>
-</ul></div>
-<div class="chapcard"><h3>권1 · 회사 S6-S11</h3><ul>
-<li><b>S6</b> 재료성질/독성/분진/NFPA 652/금속/가스/액체</li>
-<li><b>S7</b> 저장탱크/화학물질 저장/혼재/폐기물</li>
-<li><b>S8</b> 특수장비/laser/oven/ESS/PV/전기설비</li>
-<li><b>S9</b> woodworking/spray/dipping/lab/semiconductor/hot work</li>
-<li><b>S10</b> 비상전원/엘리베이터/HVAC/상업주방 hood</li>
-<li><b>S11</b> housekeeping/소화전 배치/site planning/hot work permit</li>
-</ul></div>
-<div class="chapcard"><h3>권2 · 집 S12-S17</h3><ul>
-<li><b>S12</b> 조직/훈련/PPE/dispatch/radio/pre-incident plan</li>
-<li><b>S13</b> 현장작전/fire stream/alternate water/hazmat/wildland/ARFF</li>
-<li><b>S14</b> NFPA 72/감지기/통보장치/연동/경보 ITM/CO</li>
-<li><b>S15</b> tank/public water/hydraulics/fire pump/corrosion</li>
-<li><b>S16</b> sprinkler/K-factor/hanger/storage/standpipe/NFPA 25</li>
-<li><b>S17</b> CO2/foam/extinguisher/clean agent/inert gas/explosion prevention</li>
-</ul></div>
-<div class="chapcard"><h3>권2 · 집 S18-S21</h3><ul>
-<li><b>S18</b> fire barrier/opening/interior finish/smoke/firestop/venting</li>
-<li><b>S19</b> construction type/load/column/beam/truss/내화성능</li>
-<li><b>S20</b> occupancy별 travel distance/health care/assembly/storage</li>
-<li><b>S21</b> tunnel/marine/aviation/rail/service station/EV</li>
-</ul></div>
-</div>
-</section>
-
-<section class="block" id="numhints">
-<h2>Number Hints — 외우는 숫자가 아니라 표를 찾는 주소</h2>
-<p class="note">숫자를 정답으로 외우지 않는다. 숫자가 보이면 어느 섹션/챕터/표로 갈지 떠올리는 신호로만 쓴다.</p>
-<div class="trapline"><div class="t">S14 경보 · 감지 · 통보</div><div class="split">
-<div class="branch"><b>6 dB</b><br>거리 2배 변화 / audible notification</div>
-<div class="branch"><b>75 dB</b><br>sleeping area / notification appliance</div>
-<div class="branch"><b>Temporal 3 / Temporal 4</b><br>fire alarm / CO alarm 구분</div>
-<div class="branch"><b>24h + 5min / 15min</b><br>fire alarm standby power / voice alarm</div>
-</div></div>
-<div class="trapline"><div class="t">S15 급수 · 펌프 · 수리</div><div class="split">
-<div class="branch"><b>20 psi</b><br>AWWA / public water supply / fire flow</div>
-<div class="branch"><b>static · residual · pitot</b><br>hydrant flow test / NFPA 291</div>
-<div class="branch"><b>churn · rated · peak</b><br>fire pump curve / annual pump test</div>
-</div></div>
-<div class="trapline"><div class="t">S16 스프링클러 · 수계설비</div><div class="split">
-<div class="branch"><b>K-factor</b><br>sprinkler orifice / discharge coefficient</div>
-<div class="branch"><b>68R / 79Y / 93G</b><br>sprinkler temperature color code</div>
-<div class="branch"><b>5x + 114 kg</b><br>hanger support load / pipe support</div>
-<div class="branch"><b>NFPA 25</b><br>water-based system ITM = S16.11</div>
-</div></div>
-<div class="trapline"><div class="t">S17 비수계 · 소화기 · 특수소화</div><div class="split">
-<div class="branch"><b>34%</b><br>CO2 total flooding minimum design concentration</div>
-<div class="branch"><b>10 sec</b><br>halocarbon clean agent discharge time</div>
-<div class="branch"><b>5 ft / 1.5 m</b><br>portable extinguisher mounting height</div>
-<div class="branch"><b>5 yr / 12 yr</b><br>extinguisher hydrostatic test intervals</div>
-</div></div>
-<div class="trapline"><div class="t">S18-S20 건축 · 구획 · 용도</div><div class="split">
-<div class="branch"><b>F / T / L / W / M rating</b><br>firestop / penetration / joint systems</div>
-<div class="branch"><b>Class A/B/C</b><br>interior finish or roof covering. 먼저 문맥 확인</div>
-<div class="branch"><b>travel distance</b><br>용도명이 있으면 S20, 피난 개념이면 S4</div>
-</div></div>
-</section>
-
-<section class="block" id="traps">
-<h2>Trap Map — 여기서 라우팅이 틀린다</h2>
-<p class="note">사실을 외우지 말고 갈림길을 외운다.</p>
-<div id="traplist"></div>
-</section>
-
-<div class="strategy">
-<h2>문제 하나 = 4단계</h2>
-<div class="steps">
-<div class="step"><b>1</b>키워드 하나 짚기<br><span style="opacity:.75;font-size:.85rem">K-factor / ESFR / standpipe</span></div>
-<div class="step"><b>2</b>섹션 → 위 카드<br><span style="opacity:.75;font-size:.85rem">5초 안에</span></div>
-<div class="step"><b>3</b>챕터 → 탭 또는 색인<br><span style="opacity:.75;font-size:.85rem">권1 회사 / 권2 집</span></div>
-<div class="step"><b>4</b>헤드라인만 10–15초<br><span style="opacity:.75;font-size:.85rem">표에서 답 · 계산하지 말 것</span></div>
-</div>
-<div class="rule">한 문제 3분 넘기면 찍고 넘어간다. 25개 틀려도 합격.</div>
-</div>
-
-<section class="block" id="drillbox">
-<h2>Routing Drill</h2>
-<p class="note">키워드가 뜬다. 섹션 번호를 입으로 말한다. 그다음 공개. (스페이스바)</p>
-<div id="drill">
-<div id="dkw">시작 누르기</div>
-<div id="dans"></div>
-<div id="dch"></div>
-<div style="margin-top:12px">
-<button onclick="drill()">다음 키워드</button>
-<button class="sec" onclick="showAns()">정답</button>
-</div>
-<div id="dscore"></div>
-</div>
-</section>
-
-<div class="footer">20판으로 찾기 훈련 · 시험은 21판 인쇄본 · 최종 챕터/페이지는 21판 책에서 확인</div>
+  <footer>CFPS Command Center · 개인 학습용</footer>
 </div>
 
 <script>
-const S=[
-{n:1,g:1,v:1,t:"Safety in the Built Environment",kr:"안전환경",nfpa:"NFPA 1",tags:["코드 vs 표준","AHJ","법적 책임","premises security","extreme events","business continuity","Fire Safety Concepts Tree"],ch:["Challenges to Safety in the Built Environment","Fundamentals of Structurally Safe Building Design","Codes and Standards for the Built Environment","Legal Issues for the Designer and Enforcer","Fire Prevention and Code Enforcement","Premises Security","Protecting Against Extreme Events","Emergency Management and Business Continuity","Systems Approach to Fire-Safe Building Design"],not:"보안 <b>하드웨어</b>(침입감지) → S14.10 · 경비 서비스 → S14.7. Wildland <b>지붕</b>은 S1이지만 <b>Wildland 관리</b>는 S13.5."},
-{n:2,g:1,v:1,t:"Basics of Fire and Fire Science",kr:"화재과학",nfpa:"Fire Fundamentals",tags:["flashover","HRR","fire plume","구획화재 성장","소화 이론","폭발 이론","감지 원리"],ch:["Physics and Chemistry of Fire","Physics of Fire Configuration","Flammability Hazard of Materials","Dynamics of Compartment Fire Growth","Basics of Fire Containment","Fundamentals of Fire Detection","Theory of Fire Extinguishment","Explosions"],not:"<b>이론만.</b> 감지기 하드웨어 → S14 · 소화약제 → S17 · 폭발 방지/방출 → S17.8 / S18.6."},
-{n:3,g:1,v:1,t:"Information and Analysis for Fire Protection",kr:"조사·분석",nfpa:"NFPA 921",tags:["fire modeling","risk analysis","performance-based design","통계(원인별)","화재조사","hazard analysis"],ch:["Overview of the Fire Problem and Fire Protection","Fire Loss Investigation","Fire Data Collection and Databases","Use of Fire Incident Data and Statistics","Introduction to Fire Modeling","Applying Models to FPE Problems and Investigations","Fire Hazard Analysis Techniques","Fire Risk Analysis","Closed Form Enclosure Fire Calculations","Performance-Based Codes and Standards","Overview of Performance-Based Fire Protection Design"],not:"문제에 <b>data · model · risk · 통계</b>가 있으면 먼저 여기."},
-{n:4,g:1,v:1,t:"Human Factors in Emergencies",kr:"피난",nfpa:"NFPA 101",tags:["human behavior","egress 계산","egress 설계","crowd management","evacuation","ASET/RSET"],ch:["Human Behavior and Fire","Calculation Methods for Egress Prediction","Concepts of Egress Design","Techniques of Crowd Management","Strategies for Occupant Evacuation During Emergencies"],not:"피난 <b>개념·계산</b> → S4 · <b>용도가 명시</b>되면 → S20."},
-{n:5,g:1,v:1,t:"Fire and Life Safety Education",kr:"교육",nfpa:"NFPA 1035",tags:["public education","CRR","juvenile firesetting","고위험군","메시지"],ch:["Principles and Techniques of Fire and Life Safety Education","Fire and Life Safety Education Messages","Disaster Preparedness Education","Media's Role in Fire and Life Safety Education","Reaching High-Risk Groups","Juvenile Firesetting","Using Data for Public Education Planning","Evaluation Techniques"],not:"<b>일반인 교육</b> → S5 · <b>소방대원 훈련</b> → S12.10."},
-{n:6,g:2,v:1,t:"Characteristics of Materials and Products",kr:"재료",nfpa:"NFPA 400·704",tags:["flash point","LFL/UFL","NFPA 704","cone calorimeter","Steiner tunnel","분진 특성","금속","폴리머","독성","BLEVE(가스)"],ch:["Fire Hazards of Materials","Combustion Products and Their Effects on Life Safety","Concepts and Protocols of Fire Testing","Wood and Wood-Based Products","Fibers and Textiles","Upholstered Furniture and Mattresses","Fire-Retardant Treatment of Cellulosic Materials","Dusts","Metals","Gases","Medical Gases","Flammable and Combustible Liquids","Polymeric Materials","Pesticides in the Workplace","Explosives and Blasting Agents","Manufacture and Storage of Aerosol Products","Tables and Charts"],not:"<b>물질의 성질</b> → S6 · <b>저장</b> → S7 · <b>공정에서 사용</b> → S9 · <b>창고 건물</b> → S20.16."},
-{n:7,g:2,v:1,t:"Storage and Handling of Materials",kr:"저장",nfpa:"NFPA 30·30A·400",tags:["저장탱크","가스 실린더","화학물질 저장","혼재금지","폐기물","고체연료"],ch:["Storage and Handling of Solid Fuels","Storage of Flammable and Combustible Liquids","Storage of Gases","Storage and Handling of Chemicals","Hazardous Waste Control"],not:"Hazmat <b>저장</b> → S7 · Hazmat <b>대응</b> → S13.6/13.8."},
-{n:8,g:2,v:1,t:"Special Equipment",kr:"장비",nfpa:"NFPA 484·855",tags:["industrial oven","dust collector","conveyor","laser","전자장비실","냉동/암모니아","quench tank","ESS/PV","전기설비·기구","arc flash"],ch:["Air-Moving Equipment","Chemical Processing Equipment","Materials-Handling Equipment","Automated Equipment","Lasers","Protection of Electronic Equipment","Heat Transfer Systems and Fluids","Industrial and Commercial Heat Utilization Equipment","Oil Quenching and Molten Salt Baths","Stationary Combustion Engines and Fuel Cells","Fluid Power Systems","Refrigeration Systems","Electrical Systems and Appliances"],not:"<b>전기설비·기구·arc flash → S8.13이 본진.</b> S10.1은 비상/예비전원."},
-{n:9,g:2,v:1,t:"Processes and Facilities",kr:"공정",nfpa:"NFPA 654·484",tags:["hot work","welding/cutting","spray booth","grain","semiconductor","laboratory","nuclear","power plant","wastewater","oxygen-enriched"],ch:["Woodworking Facilities and Processes","Spray Finishing and Powder Coating","Dipping and Coating Processes","Plastics Industry and Related Process Hazards","Metalworking Processes","Welding, Cutting, and Other Hot Work","Storage and Handling of Grain Mill Products","Protection of Records","Semiconductor Manufacturing","Oilseed Solvent Extraction Plants","Protection of Wastewater Treatment Plants","Fire Protection of Laboratories Using Chemicals","Fire Protection of Telecommunications Facilities","Electric Generating Plants","Nuclear Facilities","Mining and Mineral Processing","Oxygen-Enriched Atmospheres"],not:"<b>Hot work은 여기(9.6)</b> · 건설/해체 위험 → S11.4 · 분진 <b>성질</b> → S6.8."},
-{n:10,g:2,v:1,t:"Building Services",kr:"건물서비스",nfpa:"NFPA 70·96·13",tags:["비상/예비전원","발전기","엘리베이터","HVAC","주방 후드(NFPA 96)","보일러","난방기기","굴뚝"],ch:["Emergency and Standby Power Supplies","Heating Systems and Appliances","Building Transportation Systems (Elevators)","Air-Conditioning and Ventilating Systems","Ventilation of Commercial Cooking Operations","Boiler Furnaces"],not:"주방 <b>후드·덕트</b> → S10.5 · 주방 <b>습식약제</b> → S17.2 · 소화펌프 <b>전원</b> → S15.7."},
-{n:11,g:3,v:1,t:"Fire Prevention Practices",kr:"예방",nfpa:"NFPA 241·780",tags:["housekeeping","폐기물","site planning","소화전 배치","건설·해체(NFPA 241)","정전기·본딩","피뢰(NFPA 780)"],ch:["Waste Handling and Control","Housekeeping Practices","Building and Site Planning for Fire Safety","Fire Hazards of Construction, Alteration, and Demolition","Control of Electrostatic Ignition Sources","Lightning Protection Systems"],not:"소화전 <b>배치·접근</b> → S11.3 · 소화전 <b>유량시험·급수</b> → S15."},
-{n:12,g:3,v:2,t:"Non-Emergency Fire Department Functions",kr:"조직·통신",nfpa:"NFPA 1500·1561",tags:["pre-incident plan","소방 PPE","NFPA 1500","CRR","dispatch·radio","apparatus","소방훈련","fire station"],ch:["Planning for Public Fire-Rescue Protection","Organizational Benchmarking","Needs Assessment and Hazard Analysis","Managing Fire-Rescue Departments","Information Management and Computer Technology","Liability for Negligent Fire Fighting","Safety, Medical, and Health Issues and Programs","Effect of Building Construction on Fire Fighter Safety","Fire and Emergency Services Protective Clothing","Training Programs for Fire and Emergency Service Personnel","Industrial Fire Loss Prevention","Disaster Planning and Response Services","GIS for Fire Station Locations","Fire Rescue Stations and Training Centers","Alarm, Dispatch, and Communications Systems","Fire Department Apparatus and Equipment","Pre-Incident Planning for Industrial and Municipal Response","Pre-Incident Planning for Emergency Response","Community Risk Reduction"],not:"<b>출동 전</b>(계획·훈련·장비) → S12 · <b>출동 중</b>(현장·수관·hazmat) → S13."},
-{n:13,g:3,v:2,t:"Organizing for Public Sector Emergency Response",kr:"현장작전",nfpa:"NFPA 1500·472·1072",tags:["fireground","fire stream","nozzle·hose","alternate water supply","drafting","tanker shuttle","wildland","ARFF","hazmat 대응","EMS"],ch:["Fireground Operations","Organizing Rescue Operations","Fire Streams","Alternate Water Supplies","Wildland Fire Management","Public Fire Protection and Hazmat Management","Aircraft Rescue and Fire Fighting (ARFF)","Managing the Response to Hazardous Material Incidents","Emergency Medical Services and the Fire Department"],not:"<b>최대 함정:</b> Fire streams · <i>Alternate</i> water supplies(드래프팅·탱커) → S13, <b>S15 아님</b>. S15는 Fixed 전용."},
-{n:14,g:4,v:2,t:"Detection and Alarm",kr:"경보",nfpa:"NFPA 72",tags:["NFPA 72","smoke detector","heat detector","notification appliance","supervising station","CO alarm","gas detection","intrusion detection","alarm ITM"],ch:["Fire Alarm Systems","Automatic Fire Detectors","Notification Appliances","Fire Alarm System Interconnections","Inspection, Testing, and Maintenance of Fire Alarm Systems","Household Fire-Warning Equipment","Fire Protection Surveillance and Security Services","Gas and Vapor Detection Systems and Monitors","Carbon Monoxide Detection in Residential Occupancies","Security and Intrusion Detection Systems"],not:"감지 <b>하드웨어·NFPA 72</b> → S14 · 감지 <b>원리·응답시간</b> → S2.6."},
-{n:15,g:4,v:2,t:"Water Supplies for Fixed Fire Protection",kr:"급수",nfpa:"NFPA 20·22·24·291",tags:["NFPA 22 탱크","hydrant flow test","static/residual/pitot","수리계산","Hazen-Williams","fire pump controller","MIC","water distribution","underground main"],ch:["Fixed Water Storage Supplies for Fire Protection","Water Supply Requirements for Public Supply Systems","Hydraulics for Fire Protection","Water Supplies for Sprinkler Systems","Microbiologically Influenced Corrosion (MIC)","Water Distribution","Fire Pump Controllers and Power Supply Arrangements"],not:"<b>공급측 전용.</b> 스프링클러/스탠드파이프 → S16 · NFPA 25 ITM → <b>S16.11</b> · fire stream·drafting → S13."},
-{n:16,g:4,v:2,t:"Water-Based Fire Suppression Equipment",kr:"수계설비",nfpa:"NFPA 13·14·15·25·750",tags:["NFPA 13 스프링클러","K-factor","ESFR","wet/dry/preaction/deluge","hanger·내진","창고 스프링클러","water mist","water spray","NFPA 14 standpipe","NFPA 25 ITM"],ch:["Principles of Automatic Sprinkler System Performance","Automatic Sprinklers","Automatic Sprinkler Systems","Hanging and Bracing of Water-Based Systems","Sprinkler Systems for Storage Facilities","Residential Sprinkler Systems","Ultra-High-Speed Water Spray Systems","Water Mist Fire Suppression Systems","Water Spray Protection","Standpipe and Hose Systems","Care and Maintenance of Water-Based Extinguishing Systems"],not:"<b>NFPA 25는 여기(16.11)</b>, S15 아님 · 스프링클러 <b>급수원</b> → S15.4."},
-{n:17,g:4,v:2,t:"Fire Suppression Systems and Portable Fire Extinguishers",kr:"비수계·소화기",nfpa:"NFPA 10·11·12·17·2001",tags:["CO2","clean agent","halon","분말(dry chem)","습식약제(wet chem)","foam/AFFF","NFPA 10 소화기","explosion prevention(NFPA 69)","inerting"],ch:["Carbon Dioxide and Application Systems","Chemical Extinguishing Agents and Application Systems","Characteristics and Hazards of Water and Water Additives","Foam Extinguishing Agents and Systems","Fire Extinguisher Use and Maintenance","Halon and Halon Replacement Agents and Systems","Application of Gaseous Agents to Special Hazards","Explosion Prevention and Protection"],not:"<b>물 아닌 약제.</b> 폭발 <i>방지·억제</i>(NFPA 69) → S17.8 · 폭발 <i>방출</i>(NFPA 68) → S18.6."},
-{n:18,g:5,v:2,t:"Confining Fires",kr:"구획화",nfpa:"NFPA 1·80·92·68",tags:["방화벽·방화구획","방화문·개구부","내장재(interior finish)","flame spread index","연기이동·연기제어","stack effect","배연","firestop·관통부","deflagration venting(NFPA 68)"],ch:["Confinement of Fire in Buildings","Interior Finish","Smoke Movement in Buildings","Venting Practices","Penetration Sealing","Deflagration (Explosion) Venting"],not:"내장재 <b>등급</b> → S18.2 · 그 <b>시험법</b>(Steiner tunnel) → S6.3 · Firestop 정의·3종류 → S18 Ch1 / 등급·사이클 → S18 Ch5."},
-{n:19,g:5,v:2,t:"Structural Fire Protection",kr:"구조",nfpa:"NFPA 220·5000",tags:["Type I–V 건축유형","NFPA 220","내화등급","ASTM E119","구조용 강재","뿜칠 내화피복","트러스·지붕","붕괴"],ch:["Types of Building Construction","Structural Integrity During Fire","Structural Fire Safety in One- and Two-Family Dwellings","Analyzing Structural Fire Damage","Approaches to Calculating Structural Fire Resistance"],not:"<b>공간을 나눔</b> → S18 · <b>건물의 뼈대·하중</b> → S19."},
-{n:20,g:5,v:2,t:"Protecting Occupancies",kr:"용도",nfpa:"NFPA 101·IBC",tags:["NFPA 101","용도 분류","고층건물","병원·의료","집회","교정시설","보육","창고 용도","산업 용도","호텔·기숙사"],ch:["Assessing Life Safety in Buildings","Board and Care Facilities","Hotels and University Housing","Apartment Buildings","Lodging or Rooming Houses","One- and Two-Family Dwellings","Manufactured Housing","High-Rise Buildings","Assembly Occupancies","Mercantile Occupancies","Business Occupancies","Educational Occupancies","Day-Care Occupancies","Detention and Correctional Occupancies","Health Care Occupancies","Storage Occupancies","Library and Museum Collections","Industrial Occupancies","Motion Picture and Television Studios","Occupancies in Special Structures"],not:"문제에 <b>용도명</b>이 나오면 주제가 피난이든 스프링클러든 여기부터."},
-{n:21,g:5,v:2,t:"Transportation Fire Safety",kr:"이동수단",nfpa:"NFPA 30A·502·301",tags:["road tunnel","marine vessel","aviation","rail·light rail","service station(주유소)","EV·fuel cell 차량","recreational vehicle"],ch:["Passenger Vehicle Fires","Fire Safety in Commercial Vehicles","Automotive and Marine Service Station Operations","Vehicle Fueling Using Gaseous Fuels","Fuel Cell Vehicles","Recreational Vehicles","Fixed Guideway Transit and Light Rail Systems","Rail Transportation Systems","Aviation","Marine Vessels","Road Tunnels and Bridges"],not:"<b>기존 지도에 빠져 있던 섹션.</b> 터널·선박·항공·주유소는 여기 · <b>ARFF 대응</b>은 S13.7."}
-];
-
-// keyword → [section, chapter/note, split?]
-const KW={
-"flashover":[2,"2.4"],"hrr":[2,"2.1"],"heat release rate":[2,"2.1"],"fire plume":[2,"2.2"],"열전달":[2,"2.1"],
-"heat transfer":[2,"2.1"],"conduction":[2,"2.1"],"convection":[2,"2.1"],"연소":[2,"2.1"],"combustion":[2,"2.1"],
-"theory of extinguishment":[2,"2.7"],"소화이론":[2,"2.7"],"backdraft":[2,"2.4"],"점화":[2,"2.1"],
-"explosion":[2,"2.8 이론","⚠ 방지 = S17.8 (NFPA 69) · 방출 = S18.6 (NFPA 68)"],
-"폭발":[2,"2.8 이론","⚠ 방지 = S17.8 · 방출 = S18.6"],
-"deflagration":[2,"2.8 이론","⚠ venting = S18.6 (NFPA 68)"],"detonation":[2,"2.8"],
-"compartment":[2,"2.4 구획화재 성장","⚠ 방화구획 = S18.1"],
-"구획":[18,"18.1 방화구획","⚠ 구획화재 성장 = S2.4"],
-"fire safety concepts tree":[1,"1.9"],"codes and standards":[1,"1.3"],"ahj":[1,"1.3"],"코드":[1,"1.3"],
-"legal":[1,"1.4"],"premises security":[1,"1.6"],"business continuity":[1,"1.8"],"terrorism":[1,"1.7"],
-"extreme event":[1,"1.7"],"code enforcement":[1,"1.5"],
-"wildland":[13,"13.5 관리","⚠ 지붕/건축 관점 = S1"],"산불":[13,"13.5"],
-"fire modeling":[3,"3.5"],"fds":[3,"3.5"],"cfast":[3,"3.5"],"risk analysis":[3,"3.8"],"hazard analysis":[3,"3.7"],
-"performance-based":[3,"3.10–3.11"],"fire investigation":[3,"3.2"],"origin and cause":[3,"3.2"],"nfpa 921":[3,"3.2"],
-"통계":[3,"3.4 원인별","⚠ 일반·연도별 = S1 · 용도별 = S20"],"statistics":[3,"3.4","⚠ 일반 = S1 · 용도별 = S20"],
-"egress":[4,"4.2–4.3","⚠ 용도가 명시되면 S20"],"피난":[4,"4.2–4.3","⚠ 용도 명시되면 S20"],
-"evacuation":[4,"4.5"],"human behavior":[4,"4.1"],"crowd management":[4,"4.4"],"aset":[4,"4.2"],"rset":[4,"4.2"],
-"travel distance":[4,"4.3","⚠ 용도별 수치 = S20"],
-"public education":[5,"5.1"],"crr":[5,"5.1","⚠ 소방조직의 CRR = S12.19"],"juvenile firesetting":[5,"5.6"],
-"flash point":[6,"6.12"],"인화점":[6,"6.12"],"lfl":[6,"6.10/6.12"],"ufl":[6,"6.10/6.12"],
-"nfpa 704":[6,"6.1"],"cone calorimeter":[6,"6.3"],"steiner tunnel":[6,"6.3"],"fire test":[6,"6.3"],
-"dust":[6,"6.8 성질","⚠ 곡물시설 = S9.7 · 방출 = S18.6"],"분진":[6,"6.8 성질","⚠ 곡물 = S9.7 · 방출 = S18.6"],
-"combustible metal":[6,"6.9"],"금속":[6,"6.9"],"polymer":[6,"6.13"],"폴리머":[6,"6.13"],
-"upholstered furniture":[6,"6.6"],"textile":[6,"6.5"],"medical gas":[6,"6.11"],"explosives":[6,"6.15"],
-"aerosol":[6,"6.16"],"독성":[6,"6.2"],"toxicity":[6,"6.2"],"bleve":[6,"6.10 가스","⚠ 폭발 이론 = S2.8"],
-"storage tank":[7,"7.2"],"저장탱크":[7,"7.2"],"gas cylinder":[7,"7.3"],"chemical storage":[7,"7.4"],
-"hazardous waste":[7,"7.5"],"폐기물":[7,"7.5","⚠ 사업장 waste 관리 = S11.1"],"nfpa 30":[7,"7.2"],
-"hazmat":[7,"7.4 저장","⚠ 현장 대응 = S13.6 / 13.8"],
-"industrial oven":[8,"8.8"],"oven":[8,"8.8"],"dust collector":[8,"8.1"],"conveyor":[8,"8.3"],"laser":[8,"8.5"],
-"electronic equipment":[8,"8.6"],"data center":[8,"8.6"],"refrigeration":[8,"8.12"],"ammonia":[8,"8.12"],
-"quench":[8,"8.9"],"ess":[8,"8.10"],"pv":[8,"8.10"],"battery":[8,"8.10"],
-"electrical":[8,"8.13 전기설비·기구","⚠ 비상/예비전원 = S10.1"],"arc flash":[8,"8.13","⚠ 비상전원 = S10.1"],
-"전기":[8,"8.13","⚠ 비상전원 = S10.1"],
-"hot work":[9,"9.6"],"welding":[9,"9.6"],"cutting":[9,"9.6"],"용접":[9,"9.6"],
-"spray booth":[9,"9.2"],"spray finishing":[9,"9.2"],"coating":[9,"9.3"],"grain":[9,"9.7"],
-"semiconductor":[9,"9.9"],"laboratory":[9,"9.12"],"nuclear":[9,"9.15"],"원자력":[9,"9.15"],
-"power plant":[9,"9.14"],"wastewater":[9,"9.11"],"records":[9,"9.8"],"mining":[9,"9.16"],
-"oxygen-enriched":[9,"9.17"],"woodworking":[9,"9.1"],"telecommunications":[9,"9.13"],
-"standby power":[10,"10.1"],"generator":[10,"10.1"],"비상전원":[10,"10.1"],"elevator":[10,"10.3"],
-"엘리베이터":[10,"10.3"],"hvac":[10,"10.4"],"kitchen hood":[10,"10.5"],"nfpa 96":[10,"10.5"],
-"commercial cooking":[10,"10.5","⚠ 습식약제 시스템 = S17.2"],"boiler":[10,"10.6"],"heating appliance":[10,"10.2"],
-"housekeeping":[11,"11.2"],"site planning":[11,"11.3"],
-"hydrant":[11,"11.3 배치·접근","⚠ 유량시험·급수 = S15.2 · 배관 = S15.6"],"소화전":[11,"11.3 배치","⚠ 유량시험 = S15.2"],
-"demolition":[11,"11.4"],"해체":[11,"11.4"],"construction":[11,"11.4"],"nfpa 241":[11,"11.4"],
-"static electricity":[11,"11.5"],"정전기":[11,"11.5"],"bonding":[11,"11.5"],"grounding":[11,"11.5"],
-"lightning":[11,"11.6"],"피뢰":[11,"11.6"],"nfpa 780":[11,"11.6"],"working at height":[11,"11.x"],
-"pre-incident":[12,"12.17–12.18"],"nfpa 1500":[12,"12.7"],"ppe":[12,"12.9"],"turnout gear":[12,"12.9"],
-"dispatch":[12,"12.15"],"radio":[12,"12.15"],"apparatus":[12,"12.16"],"fire station":[12,"12.14"],
-"소방조직":[12,"S12"],"nfpa 1561":[12,"12.x"],
-"fireground":[13,"13.1"],"fire stream":[13,"13.3"],"nozzle":[13,"13.3"],
-"hose":[13,"13.3 소방호스","⚠ standpipe hose = S16.10"],
-"alternate water supply":[13,"13.4"],"drafting":[13,"13.4"],"tanker":[13,"13.4"],
-"arff":[13,"13.7"],"ems":[13,"13.9"],"active shooter":[13,"13.x"],"rescue":[13,"13.2"],
-"nfpa 72":[14,"S14"],"smoke detector":[14,"14.2"],"heat detector":[14,"14.2"],"감지기":[14,"14.2"],
-"detector":[14,"14.2","⚠ 감지 원리 = S2.6"],"notification appliance":[14,"14.3"],"통보기":[14,"14.3"],
-"supervising station":[14,"14.4"],"fire alarm":[14,"14.1"],"화재경보":[14,"14.1"],
-"co alarm":[14,"14.9"],"gas detection":[14,"14.8"],"intrusion detection":[14,"14.10"],"zone control":[14,"14.1"],
-"water supply":[15,"S15 고정식","⚠ alternate(드래프팅) = S13.4"],"급수":[15,"S15"],
-"nfpa 22":[15,"15.1"],"water tank":[15,"15.1"],"탱크":[15,"15.1","⚠ 위험물 저장탱크 = S7.2"],
-"gravity tank":[15,"15.1"],"hydrant flow test":[15,"15.2"],"nfpa 291":[15,"15.2"],
-"static pressure":[15,"15.3"],"residual":[15,"15.3"],"pitot":[15,"15.3"],"hydraulic calculation":[15,"15.3"],
-"수리계산":[15,"15.3"],"hazen-williams":[15,"15.3"],
-"fire pump":[15,"15.4 / 15.7 컨트롤러"],"펌프":[15,"15.4 / 15.7"],"nfpa 20":[15,"15.7"],
-"jockey pump":[15,"15.7"],"cavitation":[15,"15.3"],"npsh":[15,"15.3"],"mic":[15,"15.5"],
-"water distribution":[15,"15.6"],"underground main":[15,"15.6"],"nfpa 24":[15,"15.6"],
-"sprinkler":[16,"16.1–16.3"],"스프링클러":[16,"16.1–16.3"],"nfpa 13":[16,"16.3"],
-"k-factor":[16,"16.2"],"esfr":[16,"16.5"],"wet pipe":[16,"16.3"],"dry pipe":[16,"16.3"],
-"preaction":[16,"16.3"],"deluge":[16,"16.3"],"hanger":[16,"16.4"],"seismic":[16,"16.4"],
-"내진":[16,"16.4"],"storage sprinkler":[16,"16.5"],"residential sprinkler":[16,"16.6"],
-"water mist":[16,"16.8"],"nfpa 750":[16,"16.8"],"water spray":[16,"16.9"],"nfpa 15":[16,"16.9"],
-"standpipe":[16,"16.10"],"nfpa 14":[16,"16.10"],
-"nfpa 25":[16,"16.11 ← S15 아님!"],"itm":[16,"16.11 수계","⚠ 경보 ITM = S14.5 · 소화기 = S17.5"],
-"main drain":[16,"16.11"],"inspection testing":[16,"16.11"],
-"co2":[17,"17.1"],"nfpa 12":[17,"17.1"],"clean agent":[17,"17.6–17.7"],"청정약제":[17,"17.6"],
-"nfpa 2001":[17,"17.6"],"halon":[17,"17.6"],"dry chemical":[17,"17.2"],"분말":[17,"17.2"],
-"nfpa 17":[17,"17.2"],"wet chemical":[17,"17.2"],"foam":[17,"17.4"],"포":[17,"17.4"],"afff":[17,"17.4"],
-"nfpa 11":[17,"17.4"],"extinguisher":[17,"17.5"],"소화기":[17,"17.5"],"nfpa 10":[17,"17.5"],
-"explosion prevention":[17,"17.8"],"nfpa 69":[17,"17.8"],"inerting":[17,"17.8"],
-"fire wall":[18,"18.1"],"방화벽":[18,"18.1"],"방화문":[18,"18.1"],"nfpa 80":[18,"18.1"],
-"opening protective":[18,"18.1"],"interior finish":[18,"18.2"],"내장재":[18,"18.2"],
-"flame spread":[18,"18.2","⚠ 시험법 = S6.3"],"smoke movement":[18,"18.3"],"smoke control":[18,"18.3"],
-"연기제어":[18,"18.3"],"nfpa 92":[18,"18.3"],"stack effect":[18,"18.3"],"venting practice":[18,"18.4"],
-"배연":[18,"18.4"],"firestop":[18,"18 Ch1 정의·3종류 / Ch5 등급·사이클"],"penetration seal":[18,"18.5"],
-"관통부":[18,"18.5"],"deflagration venting":[18,"18.6"],"nfpa 68":[18,"18.6"],
-"type of construction":[19,"19.1"],"건축유형":[19,"19.1"],"nfpa 220":[19,"19.1"],
-"fire resistance rating":[19,"19.5"],"내화등급":[19,"19.5"],"astm e119":[19,"19.2"],
-"fireproofing":[19,"19.2"],"structural steel":[19,"19.2"],"truss":[19,"19.1"],"트러스":[19,"19.1"],
-"하중":[19,"19.2"],"collapse":[19,"19.2"],"nfpa 5000":[19,"19.1"],"지붕":[19,"19.1","⚠ Wildland 지붕 = S1"],
-"nfpa 101":[20,"20.1"],"life safety code":[20,"20.1"],"occupancy":[20,"20.1"],"용도":[20,"S20"],
-"high-rise":[20,"20.8"],"고층":[20,"20.8"],"health care":[20,"20.15"],"병원":[20,"20.15"],
-"assembly":[20,"20.9"],"집회":[20,"20.9"],"detention":[20,"20.14"],"day care":[20,"20.13"],
-"storage occupancy":[20,"20.16","⚠ 물질 저장 = S7 · 스프링클러 = S16.5"],"창고":[20,"20.16","⚠ 스프링클러 = S16.5"],
-"industrial occupancy":[20,"20.18"],"hotel":[20,"20.3"],"호텔":[20,"20.3"],"museum":[20,"20.17"],
-"tunnel":[21,"21.11"],"터널":[21,"21.11"],"marine":[21,"21.10"],"선박":[21,"21.10"],
-"aviation":[21,"21.9","⚠ ARFF 대응 = S13.7"],"항공":[21,"21.9"],"aircraft":[21,"21.9","⚠ ARFF = S13.7"],
-"rail":[21,"21.7–21.8"],"철도":[21,"21.7–21.8"],"service station":[21,"21.3"],"주유소":[21,"21.3"],
-"nfpa 30a":[21,"21.3"],"electric vehicle":[21,"21.4–21.5"],"fuel cell":[21,"21.5 차량","⚠ 고정식 = S8.10"],
-"recreational vehicle":[21,"21.6"],"bridge":[21,"21.11"]
-};
-
-// 한국어로 떠올렸을 때 바로 라우팅되는 보조 키워드.
-// 정답 암기용이 아니라 "어느 섹션/챕터를 열지" 정하는 주소 사전이다.
-const KOR_KW={
-"안전환경":[1,"S1"],"법적책임":[1,"1.4"],"성능기반":[1,"1.3 / S3.10","⚠ 설계분석이면 S3"],"와일드랜드":[1,"1.7","⚠ 대응/관리 = S13.5"],"산불지붕":[1,"1.7"],
-"화재과학":[2,"S2"],"비열":[2,"2.1"],"잠열":[2,"2.1"],"밀도":[2,"2.1"],"부력":[2,"2.1"],"전도":[2,"2.1"],"대류":[2,"2.1"],"복사":[2,"2.1"],"화염전파":[2,"2.2"],"훈소":[2,"2.3"],"점화":[2,"2.3"],"열방출률":[2,"2.3"],"플래시오버":[2,"2.4"],"천장제트":[2,"2.4"],"폭발이론":[2,"2.8"],"최소폭발농도":[2,"2.8"],
-"화재조사":[3,"3.2"],"발화원인":[3,"3.2"],"발화지점":[3,"3.2"],"수색영장":[3,"3.2"],"소유자허가":[3,"3.2"],"아크매핑":[3,"3.2"],"모델링":[3,"3.5"],"위험분석":[3,"3.7 / 3.8"],"이벤트트리":[3,"3.8"],"폴트트리":[3,"3.8"],
-"피난":[4,"S4","⚠ 용도별 수치 = S20"],"피난시간":[4,"4.2"],"반응시간":[4,"4.2"],"이동시간":[4,"4.2"],"보행속도":[4,"4.2"],"출구접근":[4,"4.3"],"수평출구":[4,"4.3"],"막다른복도":[4,"4.3"],
-"교육":[5,"S5"],"메시지":[5,"5.2"],"고위험군":[5,"5.5"],"청소년방화":[5,"5.6"],
-"재료":[6,"S6"],"열분해":[6,"6.2"],"독성":[6,"6.2"],"연소생성물":[6,"6.2"],"시안화수소":[6,"6.2"],"목재":[6,"6.4"],"섬유":[6,"6.5"],"가구":[6,"6.6"],"매트리스":[6,"6.6"],"난연처리":[6,"6.7"],"분진":[6,"6.9"],"분진폭발":[6,"6.9","⚠ 공정/시설이면 S9"],"금속화재":[6,"6.10"],"가스":[6,"6.11"],"의료가스":[6,"6.12"],"인화성액체":[6,"6.13"],"에어로졸":[6,"6.17"],
-"저장":[7,"S7"],"저장탱크":[7,"7.2"],"지상탱크":[7,"7.2"],"지하탱크":[7,"7.2"],"실린더":[7,"7.3"],"화학물질저장":[7,"7.4"],"혼재금지":[7,"7.4"],"유해폐기물":[7,"7.5"],
-"특수장비":[8,"S8"],"집진":[8,"8.1"],"컨베이어":[8,"8.3"],"버킷엘리베이터":[8,"8.3"],"믹서":[8,"8.3"],"레이저":[8,"8.5"],"전자장비":[8,"8.6"],"오븐":[8,"8.8"],"용광로":[8,"8.8"],"퀜치탱크":[8,"8.9"],"냉동":[8,"8.12"],"태양광":[8,"S8 / PV"],"배터리":[8,"8.14"],"에너지저장":[8,"8.14"],"열폭주":[8,"8.14"],"전기설비":[8,"8.13","⚠ 비상전원 = S10.1"],
-"공정":[9,"S9"],"목공":[9,"9.1"],"샌딩덕트":[9,"9.1"],"스프레이":[9,"9.2"],"분체도장":[9,"9.2"],"침지":[9,"9.3"],"코팅":[9,"9.3"],"플라스틱공정":[9,"9.4"],"금속가공":[9,"9.5"],"핫워크":[9,"9.6"],"용접":[9,"9.6"],"절단":[9,"9.6"],"곡물":[9,"9.7"],"반도체":[9,"9.9"],"폐수처리":[9,"9.11"],"실험실":[9,"9.12"],"원자력":[9,"9.15"],"산소농후":[9,"9.17"],
-"비상전원":[10,"10.1"],"예비전원":[10,"10.1"],"발전기":[10,"10.1"],"축전지":[10,"10.1"],"퓨즈":[10,"10.2"],"차단기":[10,"10.2"],"난방":[10,"10.3"],"보일러":[10,"10.6"],"버너":[10,"10.3"],"굴뚝":[10,"10.3"],"엘리베이터":[10,"10.4"],"댐퍼":[10,"10.5"],"방화댐퍼":[10,"10.5"],"연기댐퍼":[10,"10.5"],"상업주방":[10,"10.6"],"후드":[10,"10.6"],"배기덕트":[10,"10.6"],
-"폐기물":[11,"11.1"],"소각로":[11,"11.1"],"청소관리":[11,"11.2"],"덤프스터":[11,"11.2"],"소방차접근":[11,"11.3"],"소화전배치":[11,"11.3","⚠ 유량시험 = S15.2"],"건설화재":[11,"11.4"],"정전기":[11,"11.5"],"본딩":[11,"11.5"],"접지":[11,"11.5"],"낙뢰보호":[11,"11.6"],
-"소방조직":[12,"S12"],"보호장비":[12,"12.9"],"호흡보호구":[12,"12.9"],"소방훈련":[12,"12.11"],"소방서":[12,"12.12"],"통신":[12,"12.14"],"무전":[12,"12.14"],"디스패치":[12,"12.14"],"사전계획":[12,"12.15"],"출동전계획":[12,"12.15"],
-"현장작전":[13,"S13"],"표준작전절차":[13,"13.1"],"사이즈업":[13,"13.1"],"공격작전":[13,"13.1"],"방어작전":[13,"13.1"],"소방차":[13,"13.4"],"펌퍼":[13,"13.4"],"노즐":[13,"13.5"],"호스":[13,"13.5","⚠ standpipe hose = S16.10"],"수관":[13,"13.5"],"대체급수":[13,"13.4"],"드래프팅":[13,"13.4"],"탱커셔틀":[13,"13.4"],"위험물대응":[13,"13.8"],"항공기화재":[13,"13.7"],"액티브슈터":[13,"13.11"],
-"화재경보":[14,"S14"],"수신기":[14,"14.1"],"제어반":[14,"14.1"],"감지기":[14,"14.2"],"열감지기":[14,"14.2"],"연기감지기":[14,"14.2"],"광전식":[14,"14.2"],"이온화식":[14,"14.2"],"빔감지기":[14,"14.2"],"흡입식":[14,"14.2"],"화염감지기":[14,"14.2"],"오경보":[14,"14.2"],"통보장치":[14,"14.3"],"음향":[14,"14.3"],"시각":[14,"14.3"],"스트로브":[14,"14.3"],"데시벨":[14,"14.3"],"워터플로우":[14,"14.4"],"감시신호":[14,"14.4"],"엘리베이터리콜":[14,"14.4"],"경보점검":[14,"14.5"],"가정용경보":[14,"14.6"],"일산화탄소":[14,"14.9"],"연료가스":[14,"14.10"],
-"급수":[15,"S15"],"저수조":[15,"15.1"],"고가수조":[15,"15.1"],"소화전유량시험":[15,"15.2"],"잔류압":[15,"15.2"],"피토":[15,"15.3"],"수리계산":[15,"15.3"],"마찰손실":[15,"15.3"],"수격":[15,"15.3"],"캐비테이션":[15,"15.6"],"부식":[15,"15.5"],"소방펌프":[15,"15.6"],"펌프곡선":[15,"15.6"],"체언":[15,"15.6"],"디젤펌프":[15,"15.6"],"펌프시험":[15,"15.7"],
-"스프링클러":[16,"S16"],"헤드":[16,"16.2"],"유리벌브":[16,"16.2"],"퓨저블링크":[16,"16.2"],"오리피스":[16,"16.2"],"방수밀도":[16,"16.1"],"위험등급":[16,"16.3"],"온도등급":[16,"16.3"],"색상코드":[16,"16.3"],"습식":[16,"16.3"],"건식":[16,"16.3"],"준비작동식":[16,"16.3"],"일제개방":[16,"16.3"],"행거":[16,"16.4"],"브레이싱":[16,"16.4"],"내진":[16,"16.4"],"스러스트블록":[16,"16.4"],"창고스프링클러":[16,"16.5"],"랙저장":[16,"16.5"],"상품분류":[16,"16.5"],"주거용스프링클러":[16,"16.6"],"미분무":[16,"16.8"],"물분무":[16,"16.9"],"스탠드파이프":[16,"16.10"],"옥내소화전":[16,"16.10"],"수계점검":[16,"16.11"],
-"이산화탄소":[17,"17.1"],"전역방출":[17,"17.1"],"국소방출":[17,"17.1"],"분말":[17,"17.2"],"습식화학":[17,"17.2"],"비누화":[17,"17.2"],"포소화":[17,"17.4"],"포":[17,"17.4"],"수성막포":[17,"17.4"],"극성용매":[17,"17.4"],"혼합장치":[17,"17.4"],"에덕터":[17,"17.4"],"소화기":[17,"17.5"],"소화기거리":[17,"17.5"],"소화기높이":[17,"17.5"],"수압시험":[17,"17.5"],"청정약제":[17,"17.6"],"할론":[17,"17.6"],"노벡":[17,"17.6"],"불활성가스":[17,"17.7"],"폭발방지":[17,"17.8"],
-"방화구획":[18,"18.1"],"화재하중":[18,"18.1"],"방화문":[18,"18.1"],"개구부":[18,"18.1"],"방화블록":[18,"18.1"],"방화충전":[18,"18.5"],"관통부":[18,"18.5"],"조인트":[18,"18.5"],"내장재":[18,"18.2"],"화염전파지수":[18,"18.2"],"연기발생지수":[18,"18.2"],"룸코너시험":[18,"18.2"],"터널시험":[18,"18.2"],"연기이동":[18,"18.3"],"연기제어":[18,"18.3"],"스택효과":[18,"18.3"],"배연":[18,"18.4"],"폭발방출":[18,"18.6"],
-"구조":[19,"S19"],"사하중":[19,"19.1"],"활하중":[19,"19.1"],"풍하중":[19,"19.1"],"적설하중":[19,"19.1"],"건축유형":[19,"19.2"],"내화등급":[19,"19.2"],"기둥":[19,"19.2"],"보":[19,"19.2"],"트러스":[19,"19.2"],"중목구조":[19,"19.2"],
-"용도":[20,"S20"],"집회":[20,"20.9"],"업무시설":[20,"20.11"],"교육시설":[20,"20.12"],"보육":[20,"20.13"],"교정시설":[20,"20.14"],"의료시설":[20,"20.15"],"창고용도":[20,"20.16"],"산업용도":[20,"20.18"],"고층건물":[20,"20.8"],"공동주택":[20,"20.4"],"호텔":[20,"20.3"],"피난거리":[20,"20.1","⚠ 피난 개념 = S4"],
-"터널":[21,"21.11"],"선박":[21,"21.10"],"항공":[21,"21.9"],"철도":[21,"21.8"],"경전철":[21,"21.7"],"주유소":[21,"21.3"],"차량화재":[21,"21.1"],"전기차":[21,"21.5"],"레저차량":[21,"21.6"]
-};
-Object.assign(KW,KOR_KW);
-
-const TRAPS=[
-{t:"물(Water) — 세 섹션이 나눠 가진다",b:[["<b>S15</b> 공급","탱크 · 소화전 유량시험 · 수리계산 · 펌프 컨트롤러"],["<b>S16</b> 설비","스프링클러 · 스탠드파이프 · water spray · mist · NFPA 25"],["<b>S13</b> 소방대","fire stream · 드래프팅 · 탱커 셔틀"]]},
-{t:"NFPA 25 / ITM — 가장 많이 틀리는 라우팅",b:[["<b>S16.11</b>","수계설비 ITM (NFPA 25) — S15 아님"],["<b>S14.5</b>","경보설비 ITM (NFPA 72)"],["<b>S17.5</b>","소화기 점검·정비 (NFPA 10)"]]},
-{t:"Explosion — 집이 네 개",b:[["<b>S2.8</b>","폭발 이론"],["<b>S17.8</b>","폭발 방지·억제 (NFPA 69)"],["<b>S18.6</b>","폭발 방출 · deflagration venting (NFPA 68)"],["<b>S6.8 / S9.7</b>","분진 성질 / 곡물시설"]]},
-{t:"Compartment — 영어 한 단어, 두 갈래",b:[["<b>S2.4</b>","Compartment fire growth — 화재 성장 거동"],["<b>S18.1</b>","Confinement — 방화구획, 벽·개구부"]]},
-{t:"전기 — S8이 본진",b:[["<b>S8.13</b>","Electrical Systems & Appliances · arc flash"],["<b>S10.1</b>","Emergency & Standby Power — 비상/예비전원"],["<b>S15.7</b>","소화펌프 전원 배열"]]},
-{t:"Hazmat / Wildland — 저장이냐 대응이냐",b:[["<b>S7.4</b>","화학물질 저장·취급"],["<b>S13.6 / 13.8</b>","Hazmat 현장 대응"],["<b>S13.5</b>","Wildland Fire Management"],["<b>S1</b>","Wildland 지붕·건축 관점 (pg86)"]]},
-{t:"물질 vs 저장 vs 공정 vs 용도",b:[["<b>S6</b>","인화점 · LFL · NFPA 704 — 물질 자체"],["<b>S7</b>","저장·취급"],["<b>S9</b>","공정에서 사용"],["<b>S20.16</b>","창고라는 건물 용도"]]},
-{t:"통계 문제 — 세 갈래",b:[["<b>S1</b>","일반 · 연도별 추이"],["<b>S3</b>","원인별 · 데이터 분석"],["<b>S20</b>","용도별"]]},
-{t:"피난 — 용도가 나오면 S20",b:[["<b>S4</b>","피난 계산 · 설계 개념 · 군중 · ASET/RSET"],["<b>S20</b>","용도가 <u>명시</u>되면 그 용도 챕터"]]},
-{t:"주방 화재 — 한 문제에 세 섹션",b:[["<b>S10.5</b>","후드·덕트·환기 (NFPA 96)"],["<b>S17.2</b>","습식약제 시스템"],["<b>S17.5</b>","K급 소화기"]]},
-{t:"소화전 — 문제가 진짜 묻는 것",b:[["<b>S11.3</b>","어디에 둘 것인가 — 배치·접근"],["<b>S15.2</b>","물이 얼마나 나오나 — 유량시험 (NFPA 291)"],["<b>S15.6</b>","공급 배관 — distribution (NFPA 24)"]]},
-{t:"감지 — 원리 vs 하드웨어",b:[["<b>S2.6</b>","Fundamentals of Fire Detection — 감지 원리"],["<b>S14</b>","감지기 · 수신기 · 통보기 · NFPA 72"]]},
-{t:"구획화 vs 구조",b:[["<b>S18</b>","벽 · 개구부 · 내장재 · 연기제어 — 공간을 나눔"],["<b>S19</b>","건축유형 · 내화등급 · 하중 · 붕괴 — 건물의 뼈대"]]},
-{t:"S21 — 기존 지도에 없던 섹션",b:[["<b>S21</b>","터널 · 선박 · 항공 · 철도 · 주유소 · EV"],["<b>S13.7</b>","ARFF — 항공기 화재 <i>대응</i>"]]}
-];
-
-const cards=document.getElementById('cards');
-cards.innerHTML=S.map(s=>`
-<div class="sec-card g${s.g}" id="s${s.n}" data-search="${(s.t+' '+s.kr+' '+s.tags.join(' ')+' '+s.ch.join(' ')).toLowerCase()}">
-<div class="sec-head"><div class="num">${s.n}</div><div><div class="tit">${s.t}</div><div class="kr">${s.kr}</div></div><span class="vbadge ${s.v===2?'v2':''}">권${s.v}</span></div>
-<div class="nfpa">${s.nfpa}</div>
-<div class="tags">${s.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-<details><summary>챕터 ${s.ch.length}개</summary><ol class="chs">${s.ch.map(c=>`<li>${c}</li>`).join('')}</ol></details>
-<div class="notmine">${s.not}</div>
-</div>`).join('');
-
-document.getElementById('traplist').innerHTML=TRAPS.map(t=>`
-<div class="trapline"><div class="t">${t.t}</div><div class="split">${t.b.map(x=>`<div class="branch">${x[0]}<br><span style="color:#546">${x[1]}</span></div>`).join('')}</div></div>`).join('');
-
-const q=document.getElementById('q'),res=document.getElementById('result');
-function render(hits){res.innerHTML=hits.map(k=>{const a=KW[k];const s=a[0],c=a[1],sp=a[2];
- return `<div class="hit"><span class="kw">${k}</span><span class="to">→ S${s}</span><span class="ch">${c} · ${S.find(x=>x.n===s).kr} · 권${S.find(x=>x.n===s).v}</span>${sp?`<span class="split2">${sp}</span>`:''}</div>`}).join('');}
-q.addEventListener('input',()=>{
-  const v=q.value.trim().toLowerCase();
-  document.querySelectorAll('.hit-card').forEach(e=>e.classList.remove('hit-card'));
-  if(v.length<1){res.style.display='none';return;}
-  const hits=Object.keys(KW).filter(k=>k.includes(v)||(v.length>3&&v.includes(k))).slice(0,7);
-  if(hits.length){render(hits);const first=KW[hits[0]][0];const card=document.getElementById('s'+first);
-    if(card){card.classList.add('hit-card');card.scrollIntoView({behavior:'smooth',block:'center'})}}
-  else{const c=[...document.querySelectorAll('.sec-card')].filter(e=>e.dataset.search.includes(v));
-    if(c.length){res.innerHTML=`<div class="hit"><span class="kw">${v}</span><span class="to">→ S${c[0].id.slice(1)}</span><span class="ch">섹션 본문에서 발견</span></div>`;c.forEach(e=>e.classList.add('hit-card'));c[0].scrollIntoView({behavior:'smooth',block:'center'})}
-    else res.innerHTML=`<div style="color:#69778a">"<b>${v}</b>" 경로 없음. Trap Map 확인 — 분기 키워드일 수 있음.</div>`;}
-  res.style.display='block';});
-function clearQ(){q.value='';res.style.display='none';document.querySelectorAll('.hit-card').forEach(e=>e.classList.remove('hit-card'));window.scrollTo({top:0,behavior:'smooth'})}
-function jump(n){const c=document.getElementById('s'+n);document.querySelectorAll('.hit-card').forEach(e=>e.classList.remove('hit-card'));c.classList.add('hit-card');c.scrollIntoView({behavior:'smooth',block:'center'})}
-
-const KEYS=Object.keys(KW);let cur=null,seen=0,shown=false;
-function drill(){cur=KEYS[Math.floor(Math.random()*KEYS.length)];shown=false;seen++;
-  document.getElementById('dkw').textContent=cur.toUpperCase();
-  document.getElementById('dans').style.display='none';document.getElementById('dch').style.display='none';
-  document.getElementById('dscore').textContent=`${seen}번째 키워드`;
-  document.getElementById('drillbox').scrollIntoView({behavior:'smooth',block:'center'});}
-function showAns(){if(!cur)return drill();const a=KW[cur];
-  const el=document.getElementById('dans'),d=document.getElementById('dch');
-  el.textContent=`→ SECTION ${a[0]}`;d.innerHTML=`${a[1]} · ${S.find(x=>x.n===a[0]).kr} · 권${S.find(x=>x.n===a[0]).v}${a[2]?`<br><span style="color:#c94c4c;font-weight:800">${a[2]}</span>`:''}`;
-  el.style.display='block';d.style.display='block';shown=true;}
-document.addEventListener('keydown',e=>{if(e.target===q)return;if(e.code==='Space'){e.preventDefault();shown?drill():showAns()}});
+  // D-day countdown to 2026-08-23 (exam), Dubai time
+  (function(){
+    const exam = new Date('2026-08-23T00:00:00+04:00');
+    const now = new Date();
+    const days = Math.ceil((exam - now) / 86400000);
+    const el = document.getElementById('dday');
+    el.textContent = days > 0 ? ('D-' + days) : (days === 0 ? 'D-DAY' : ('D+' + Math.abs(days)));
+    if(days > 30) el.classList.remove('warn');
+  })();
 </script>
 </body>
 </html>
