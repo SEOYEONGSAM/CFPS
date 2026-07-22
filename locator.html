@@ -277,6 +277,106 @@
   .applink .sub{font-weight:400;color:rgba(11,22,34,.72)}
 
   .hidden{display:none!important}
+
+  /* ================================================================
+     READABILITY PASS — 한글 가독성 개선
+     문제: lang-both 모드에서 한글이 항상 --muted(#8aa1bd) + 0.88~0.92em로
+     렌더링됨. 한글은 라틴 문자보다 획이 복잡해서 더 크고 밝아야 하는데
+     정반대로 처리되고 있었음. 아래에서 전부 되돌림.
+     ================================================================ */
+  :root{
+    --kr:#c6d5e8;        /* 한글 보조텍스트 — panel 대비 10.6:1 (기존 5.9:1) */
+    --fs:1;              /* 글자 크기 배율 */
+  }
+  body.fs-l{--fs:1.12}
+  body.fs-xl{--fs:1.26}
+
+  body{line-height:1.62}
+
+  /* --- 한글: 영문과 같은 크기, 더 밝게, 줄간격 넉넉히 --- */
+  body.lang-both .bi .kr,
+  body.lang-both .fact .kr,
+  body.lang-both .rule-item .txt .kr,
+  body.lang-both .numrow .label .kr,
+  body.lang-both .qcard .qtxt .kr,
+  body.lang-both .fcard .front .kr,
+  body.lang-both .card-head h3 .kr,
+  body.lang-both .secdiv .name .kr,
+  body.lang-both .step .body .head .kr,
+  body.lang-both .fc-intro .kr,
+  body.lang-both footer .kr{
+    font-size:1em;
+    color:var(--kr);
+    line-height:1.75;
+  }
+  body.lang-both .bi-inline .kr{color:var(--kr)}
+  .step .body .desc .kr,
+  .sec-sub .kr,
+  .subtitle .kr{color:var(--kr)}
+  body.lang-both .fcard .back .kr{font-size:1em;line-height:1.75}  /* 정답은 초록 유지 */
+
+  /* --- 본문 크기 상향 (배율 적용) --- */
+  .fact{font-size:calc(15px*var(--fs));line-height:1.72}
+  .fact .kr{color:var(--kr)}
+  .kw span{font-size:calc(13.5px*var(--fs))}
+  .flow{font-size:calc(13px*var(--fs));line-height:1.85}
+  .numrow .label{font-size:calc(15px*var(--fs))}
+  .numrow .label small{font-size:calc(13px*var(--fs))}
+  .numrow .val{font-size:calc(14.5px*var(--fs))}
+  .card-head h3{font-size:calc(16px*var(--fs))}
+  .qcard .qtxt{font-size:calc(15.5px*var(--fs));line-height:1.7}
+  .rule-item{font-size:calc(14.5px*var(--fs));line-height:1.7}
+  .step .body .head{font-size:calc(16px*var(--fs))}
+  .step .body .desc .en,.step .body .desc .kr{font-size:calc(14.5px*var(--fs));line-height:1.7}
+  .sec-title{font-size:calc(20px*var(--fs))}
+  .sec-sub{font-size:calc(14px*var(--fs))}
+  .secdiv .name{font-size:calc(16px*var(--fs))}
+  .fcard .front{font-size:calc(15.5px*var(--fs))}
+  .fcard .back{font-size:calc(15px*var(--fs))}
+  .fc-intro{font-size:calc(14.5px*var(--fs))}
+  .ans{font-size:calc(14.5px*var(--fs))}
+  .qbody{font-size:calc(16px*var(--fs));line-height:1.72}
+  .qopt{font-size:calc(15px*var(--fs));line-height:1.6}
+  .qfeed{font-size:calc(14px*var(--fs));line-height:1.7}
+  .subtitle{font-size:calc(15px*var(--fs))}
+  .hint{font-size:calc(13px*var(--fs))}
+  footer{font-size:calc(13.5px*var(--fs))}
+
+  /* --- 초소형 라벨: 최소 11px 보장 + 자간 완화 --- */
+  .lbl{font-size:11px;letter-spacing:.07em}
+  .prio{font-size:10.5px}
+  .eyebrow{letter-spacing:.16em}
+
+  /* --- 글자 크기 토글 --- */
+  .size-toggle{display:inline-flex;margin-top:16px;margin-left:6px;
+    border:1px solid var(--line);border-radius:10px;overflow:hidden;vertical-align:top}
+  .size-toggle button{font-family:var(--sans);padding:7px 13px;background:var(--panel-2);
+    color:var(--muted);border:none;cursor:pointer;border-right:1px solid var(--line);line-height:1}
+  .size-toggle button:last-child{border-right:none}
+  .size-toggle button.on{background:var(--water);color:var(--bg);font-weight:700}
+  .size-toggle button[data-fs="m"]{font-size:12px}
+  .size-toggle button[data-fs="l"]{font-size:14px}
+  .size-toggle button[data-fs="xl"]{font-size:16px}
+
+  /* --- 모바일에서도 줄이지 않음 (원래 media query가 다시 줄이던 걸 상쇄) --- */
+  @media (max-width:640px){
+    .fact{font-size:calc(14.5px*var(--fs));line-height:1.7}
+    .kw span{font-size:calc(13px*var(--fs))}
+    .card-head h3{font-size:calc(15px*var(--fs))}
+    .numrow .label{font-size:calc(14.5px*var(--fs))}
+    .numrow .val{font-size:calc(14px*var(--fs))}
+    .qtxt{font-size:calc(15px*var(--fs))}
+    .qbody{font-size:calc(15.5px*var(--fs))}
+    .qopt{font-size:calc(14.5px*var(--fs))}
+  }
+
+  /* 섹션 매핑 표 — 한글은 줄바꿈, 인라인 구분자 제거 */
+  .secmap{margin-top:14px}
+  .secmap .numrow{grid-template-columns:1fr auto;align-items:center}
+  .secmap .numrow .label .kr{display:block;margin-top:3px}
+  body.lang-both .secmap .numrow .label .kr::before{content:none}
+  .secmap .numrow .val{font-size:calc(15px*var(--fs));font-weight:700;
+    color:var(--bg);background:var(--ember);border-radius:7px;padding:3px 10px;min-width:44px}
 </style>
 </head>
 <body class="lang-both">
@@ -308,6 +408,11 @@
       <button data-lang="en">EN</button>
       <button data-lang="kr">한국어</button>
       <button data-lang="both" class="on">둘 다</button>
+    </div>
+    <div class="size-toggle" id="sizeToggle" title="글자 크기">
+      <button data-fs="m" class="on">A</button>
+      <button data-fs="l">A</button>
+      <button data-fs="xl">A</button>
     </div>
   </div>
 </header>
@@ -388,11 +493,34 @@
       <p class="sec-sub"><span class="en">Don't memorise — <em>locate fast</em>. Every question = 4 moves.</span><span class="kr">외우지 말고 <em>빨리 찾기</em>. 모든 문제 = 4단계.</span></p></div>
     </div>
     <div class="method">
-      <div class="step"><span class="n">1</span><div class="body"><div class="head bi-inline"><span class="en">Which SECTION?</span><span class="kr">어느 섹션?</span></div><div class="desc"><span class="en">Fire science/combustion/HRR/ignition/explosion → S2. Investigation/modeling/hazard/risk → S3. Education/CRR/messages → S5. Materials/products/toxicants/dust/metals/gases/liquids → S6. Storage tanks/fuels/liquids/gases/chemicals → S7. Special equipment/lasers/ESS/PV/ovens/heat-transfer systems → S8. Processes/facilities/woodworking/powder coating/labs/semiconductors/grain/nuclear → S9. Building services: power/electrical/heating/elevators/HVAC/commercial cooking → S10. Prevention practices: waste/housekeeping/hydrants/hot work/lightning → S11. Fire service org/PPE/training/stations/radio/dispatch/pre-incident planning → S12. Fire department operations/EMS/vehicles/fire streams/hazmat/wildland/active shooter → S13. Fire alarm/detection/notification → S14. Water/supply/pumps → S15. Sprinkler/standpipe/hose → S16. CO2/foam/extinguisher/clean agent → S17. Confinement/openings/interior finish → S18. Construction/loads → S19. Egress/human behavior → S4. Occupancy-specific → S20. Disasters/history → S1.</span><span class="kr">화재과학·연소·HRR·점화·폭발 → S2. 조사·모델링·hazard/risk → S3. 교육·CRR·메시지 → S5. 재료·제품·독성물질·분진·금속·가스·액체 → S6. 저장탱크·연료·액체·가스·화학물질 → S7. 특수장비·laser·ESS·PV·oven·heat-transfer system → S8. 공정·시설·woodworking·powder coating·lab·semiconductor·grain·nuclear → S9. 건물서비스: power/electrical/heating/elevator/HVAC/commercial cooking → S10. 예방실무: waste/housekeeping/hydrant/hot work/lightning → S11. 소방조직/PPE/training/station/radio/dispatch/pre-incident planning → S12. 현장작전/EMS/vehicle/fire stream/hazmat/wildland/active shooter → S13. 화재경보·감지·알림 → S14. 물·급수·펌프 → S15. 스프링클러·스탠드파이프·호스 → S16. CO2·포·소화기·청정약제 → S17. 구획·개구부·내장재 → S18. 구조·하중 → S19. 피난·인간행동 → S4. 용도별 기준 → S20. 재난·역사 → S1.</span></div></div></div>
+      <div class="step"><span class="n">1</span><div class="body"><div class="head bi-inline"><span class="en">Which SECTION?</span><span class="kr">어느 섹션?</span></div><div class="desc"><span class="en">Match the keyword to a section using the table below.</span><span class="kr">아래 표에서 키워드 → 섹션 매칭.</span></div></div></div>
       <div class="step"><span class="n">2</span><div class="body"><div class="head bi-inline"><span class="en">Which CHAPTER?</span><span class="kr">어느 챕터?</span></div><div class="desc"><span class="en">The keyword tells you the chapter — don't search all.</span><span class="kr">키워드가 챕터를 알려줌 — 전부 뒤지지 말 것.</span></div></div></div>
       <div class="step"><span class="n">3</span><div class="body"><div class="head bi-inline"><span class="en">Which KEYWORD?</span><span class="kr">어느 키워드?</span></div><div class="desc"><span class="en">Name the one word (K factor / ESFR / hazard / hanger / standpipe). That's your address.</span><span class="kr">핵심 단어 하나 짚기 (K factor / ESFR / hazard / hanger / standpipe). 그게 주소.</span></div></div></div>
       <div class="step"><span class="n">4</span><div class="body"><div class="head bi-inline"><span class="en">Scan the HEADLINES.</span><span class="kr">헤드라인만 훑기.</span></div><div class="desc"><span class="en">Give yourself 10–15 sec to read all headlines before reading any paragraph.</span><span class="kr">문단 읽기 전에 10–15초 동안 헤드라인 전체를 먼저 훑기.</span></div></div></div>
     </div>
+    <div class="numgrid secmap">
+      <div class="numrow"><span class="label"><span class="en">Disasters, history</span><span class="kr">재난·역사</span></span><span class="val">S1</span></div>
+      <div class="numrow"><span class="label"><span class="en">Fire science · combustion · HRR · ignition · explosion</span><span class="kr">화재과학·연소·HRR·점화·폭발</span></span><span class="val">S2</span></div>
+      <div class="numrow"><span class="label"><span class="en">Investigation · modeling · hazard · risk</span><span class="kr">조사·모델링·hazard·risk</span></span><span class="val">S3</span></div>
+      <div class="numrow"><span class="label"><span class="en">Egress · human behavior</span><span class="kr">피난·인간행동</span></span><span class="val">S4</span></div>
+      <div class="numrow"><span class="label"><span class="en">Education · CRR · public messages</span><span class="kr">교육·CRR·대국민 메시지</span></span><span class="val">S5</span></div>
+      <div class="numrow"><span class="label"><span class="en">Materials · products · toxicants · dust · metals · gases · liquids</span><span class="kr">재료·제품·독성물질·분진·금속·가스·액체</span></span><span class="val">S6</span></div>
+      <div class="numrow"><span class="label"><span class="en">Storage tanks · fuels · liquids · gases · chemicals</span><span class="kr">저장탱크·연료·액체·가스·화학물질</span></span><span class="val">S7</span></div>
+      <div class="numrow"><span class="label"><span class="en">Special equipment · lasers · ESS · PV · ovens · heat transfer</span><span class="kr">특수장비·laser·ESS·PV·oven·열전달설비</span></span><span class="val">S8</span></div>
+      <div class="numrow"><span class="label"><span class="en">Processes · woodworking · powder coating · labs · semiconductor · grain · nuclear</span><span class="kr">공정·목공·분체도장·실험실·반도체·곡물·원자력</span></span><span class="val">S9</span></div>
+      <div class="numrow"><span class="label"><span class="en">Building services · power · heating · elevators · HVAC · commercial cooking</span><span class="kr">건물서비스·전력·난방·엘리베이터·HVAC·주방</span></span><span class="val">S10</span></div>
+      <div class="numrow"><span class="label"><span class="en">Prevention · waste · housekeeping · hydrants · hot work · lightning</span><span class="kr">예방실무·폐기물·정리정돈·소화전·화기작업·낙뢰</span></span><span class="val">S11</span></div>
+      <div class="numrow"><span class="label"><span class="en">Fire service org · PPE · training · stations · radio · dispatch · pre-incident plan</span><span class="kr">소방조직·PPE·훈련·소방서·무선·출동지령·사전계획</span></span><span class="val">S12</span></div>
+      <div class="numrow"><span class="label"><span class="en">FD operations · EMS · vehicles · fire streams · hazmat · wildland · active shooter</span><span class="kr">현장작전·EMS·차량·방수·hazmat·산불·총기사고</span></span><span class="val">S13</span></div>
+      <div class="numrow"><span class="label"><span class="en">Fire alarm · detection · notification</span><span class="kr">화재경보·감지·알림</span></span><span class="val">S14</span></div>
+      <div class="numrow"><span class="label"><span class="en">Water · supply · pumps</span><span class="kr">물·급수·펌프</span></span><span class="val">S15</span></div>
+      <div class="numrow"><span class="label"><span class="en">Sprinkler · standpipe · hose</span><span class="kr">스프링클러·스탠드파이프·호스</span></span><span class="val">S16</span></div>
+      <div class="numrow"><span class="label"><span class="en">CO2 · foam · extinguisher · clean agent</span><span class="kr">CO2·포·소화기·청정약제</span></span><span class="val">S17</span></div>
+      <div class="numrow"><span class="label"><span class="en">Confinement · openings · interior finish</span><span class="kr">구획·개구부·내장재</span></span><span class="val">S18</span></div>
+      <div class="numrow"><span class="label"><span class="en">Construction · loads</span><span class="kr">구조·하중</span></span><span class="val">S19</span></div>
+      <div class="numrow"><span class="label"><span class="en">Occupancy-specific requirements</span><span class="kr">용도별 기준</span></span><span class="val">S20</span></div>
+    </div>
+
     <div class="rules">
       <div class="rule-item"><span class="k">NFPA #</span><span class="txt"><span class="en">Standard for any topic = references at the <b>END of the chapter</b>.</span><span class="kr">주제별 NFPA 표준 = <b>챕터 맨 끝</b> references.</span></span></div>
       <div class="rule-item"><span class="k">Testing</span><span class="txt"><span class="en">Inspection/testing/maintenance = <b>always the last topic</b> of a chapter.</span><span class="kr">점검/시험/유지관리 = <b>항상 챕터 맨 마지막</b> 주제.</span></span></div>
@@ -1604,6 +1732,17 @@
     body.classList.remove('lang-en','lang-kr','lang-both');
     body.classList.add('lang-'+b.dataset.lang);
   }));
+
+  // ---- Text size toggle (persists) ----
+  function applyFs(v){
+    body.classList.remove('fs-l','fs-xl');
+    if(v==='l'||v==='xl') body.classList.add('fs-'+v);
+    document.querySelectorAll('#sizeToggle button').forEach(x=>x.classList.toggle('on',x.dataset.fs===v));
+    try{ localStorage.setItem('cfps_locator_fs', v); }catch(e){}
+  }
+  document.querySelectorAll('#sizeToggle button').forEach(b=>
+    b.addEventListener('click',()=>applyFs(b.dataset.fs)));
+  try{ const saved=localStorage.getItem('cfps_locator_fs'); if(saved) applyFs(saved); }catch(e){}
 
   // ---- Expand/collapse ----
   document.querySelectorAll('.card-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')));
