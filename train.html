@@ -235,8 +235,15 @@ const SLOW_MS=90000; // 90s = "slow" threshold (실전 오픈북 기준)
 const $=id=>document.getElementById(id);
 const fmt=ms=>{const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
 const chLabel=c=>CH[c]?(c+' '+CH[c]):c;
-const chList=s=>{const seen=[];QB.forEach(q=>{if(q.s===s&&!seen.includes(q.c))seen.push(q.c);});
-  return seen.sort((a,b)=>(+a.split('-')[1])-(+b.split('-')[1]));};
+// Chapters present in the bank are sparse (e.g. S12 only has 1,4,9,11,12,14,15).
+// Return a CONTIGUOUS 1..max range so the picker shows every chapter, not just ones with questions.
+const chList=s=>{
+  let mx=0;
+  QB.forEach(q=>{ if(q.s===s){ const n=+q.c.split('-')[1]; if(n>mx) mx=n; } });
+  if(!mx) return [];                       // sections with no questions at all (S5, S21)
+  const out=[]; for(let i=1;i<=mx;i++) out.push(s+'-'+i);
+  return out;
+};
 
 /* ---------- section dropdown ---------- */
 (function(){
@@ -360,17 +367,24 @@ function renderCard(){
 
 // build chapter buttons only after section is picked, then reveal step 3
 function revealStep3(){
-  const q=cur;
-  // title now shows the ACTUAL section (safe — section already committed)
-  $('step3title').textContent = 'S'+q.s+'의 어느 챕터?';
-  const chs=chList(q.s);
-  let h='';
-  chs.forEach(c=>{ h+='<button class="chbtn" data-c="'+c+'"><b>'+c+'</b>'+(CH[c]||'')+'</button>'; });
-  const row=$('chrow'); row.innerHTML=h;
+  // Use the section SHE picked — not the correct one. Using q.s would leak the
+  // right section whenever her guess was wrong.
+  const s=pickSec;
+  $('step3title').textContent = 'S'+s+'의 어느 챕터?';
+  const chs=chList(s);
+  const row=$('chrow');
+  if(!chs.length){
+    // no chapter data for this section (S5 / S21 have no questions in the bank)
+    row.innerHTML='<button class="chbtn" data-c=""><b>?</b>챕터 정보 없음 — 계속</button>';
+  }else{
+    let h='';
+    chs.forEach(c=>{ h+='<button class="chbtn" data-c="'+c+'"><b>'+c+'</b>'+(CH[c]||'')+'</button>'; });
+    row.innerHTML=h;
+  }
   row.querySelectorAll('.chbtn').forEach(b=>{
     b.addEventListener('click',()=>{
       if(answered)return;
-      pickChap=b.dataset.c;
+      pickChap=b.dataset.c||null;
       row.querySelectorAll('.chbtn').forEach(x=>x.classList.remove('sel'));
       b.classList.add('sel');
       revealStep4();
